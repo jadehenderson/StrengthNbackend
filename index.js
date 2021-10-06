@@ -5,8 +5,8 @@ const bcrypt = require("bcrypt");
 
 const app = express();
 const port = 5000;
-const pool = require("./db");
-const jwtGenerator = require("./jwtGenerator");
+
+
 
 
 
@@ -17,5 +17,4 @@ const authRoute = require("./routes/jwtAuth");
 app.use("/auth", authRoute);
 app.listen(port, async() => {
     console.log(`Server running on port:${port}`);
-
 })
