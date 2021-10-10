@@ -15,6 +15,9 @@ app.use(cors());
 app.use(express.json());
 const authRoute = require("./routes/jwtAuth");
 app.use("/auth", authRoute);
+app.get("/", (req, res) => {
+    res.send("We are running");
+});
 app.listen(port, async() => {
     console.log(`Server running on port:${port}`);
 })
