@@ -1,5 +1,5 @@
 
-module.exports = (req, res, next) => {
+const validInfo = (req, res, next) => {
     const { email, fname, lname, password } = req.body;
   
     function validEmail(userEmail) {
@@ -26,3 +26,5 @@ module.exports = (req, res, next) => {
   
     next();
 };
+
+module.exports = validInfo;

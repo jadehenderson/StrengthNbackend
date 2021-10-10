@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = async(req, res, next) => {
+const authorization = async(req, res, next) => {
     try {
         const jwtToken = req.header("token");
         //console.log(jwtToken);
@@ -18,3 +18,5 @@ module.exports = async(req, res, next) => {
     }
 
 }
+
+module.exports = authorization;
