@@ -5,17 +5,20 @@ module.exports = (req, res, next) => {
     function validEmail(userEmail) {
       return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(userEmail);
     }
+    function isBlank(str) {
+      return (!str || /^\s*$/.test(str));
+    }
   
     if (req.path === "/register") {
       console.log(!email.length);
-      if (![email, fname, lname, password].every(Boolean)) {
-        return res.status(401).json("Missing Credentials");
+      if ([email, fname, lname, password].some(isBlank)) {
+        return res.status(401).json("Missing Credential(s)");
       } else if (!validEmail(email)) {
         return res.status(401).json("Invalid Email");
       }
     } else if (req.path === "/login") {
-      if (![email, password].every(Boolean)) {
-        return res.status(401).json("Missing Credentials");
+      if ([email, password].some(isBlank)) {
+        return res.status(401).json("Missing Credential(s)");
       } else if (!validEmail(email)) {
         return res.status(401).json("Invalid Email");
       }
