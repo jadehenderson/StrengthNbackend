@@ -8,6 +8,8 @@ const validInfo = (req, res, next) => {
     function isBlank(str) {
       return (!str || /^\s*$/.test(str));
     }
+    console.log("not working")
+    console.log(req.path)
   
     if (req.path === "/register") {
       console.log("middlewear register");
