@@ -40,10 +40,12 @@ router.post("/login" ,validInfo, async(req, res) => {
         if (user.rows.length === 0) {
             return res.status(401).send("Email does not exist")
         }
-        const validPassword = bcrypt.compare(password, user.rows[0].pword);
+        const validPassword = await bcrypt.compare(password, user.rows[0].pword);
+        console.log(validPassword)
         if (!validPassword) {
             return res.status(401).send("Password is not correct")
         }
+        
         const token = jwtGenerator(user.rows[0].userid);
         res.json(token);
 
@@ -52,7 +54,7 @@ router.post("/login" ,validInfo, async(req, res) => {
         return res.status(500).send("Server Error");
     }
 })
-router.post("/is-verify" ,authorization, async(req, res) => {
+router.post("/verify" ,authorization, async(req, res) => {
     try {
         res.json(true);
 
