@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     }
   
     if (req.path === "/register") {
-      console.log(!email.length);
+      console.log("middlewear register");
       if ([email, fname, lname, password].some(isBlank)) {
         return res.status(401).json("Missing Credential(s)");
       } else if (!validEmail(email)) {
