@@ -8,17 +8,22 @@ const validInfo = (req, res, next) => {
     function isBlank(str) {
       return (!str || /^\s*$/.test(str));
     }
-    console.log("not working")
+    //console.log("not working")
     console.log(req.path)
+    let path = req.path;
+    if (process.env.NODE_ENV == "production") {
+      path = path.slice(0,-1);
+    }
+    console.log(path);
   
-    if (req.path === "/register") {
+    if (path === "/register") {
       console.log("middlewear register");
       if ([email, fname, lname, password].some(isBlank)) {
         return res.status(401).json("Missing Credential(s)");
       } else if (!validEmail(email)) {
         return res.status(401).json("Invalid Email");
       }
-    } else if (req.path === "/login") {
+    } else if (path === "/login") {
       if ([email, password].some(isBlank)) {
         return res.status(401).json("Missing Credential(s)");
       } else if (!validEmail(email)) {
