@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 let port = process.env.PORT || 5000;
 const authRoute = require("./routes/jwtAuth");
-const adminRoute = require("./routes/admiistrator");
+const adminRoute = require("./routes/administrator");
 
 
 
