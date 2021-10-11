@@ -7,7 +7,7 @@ const pool = require("../db");
 router.post("/group" , async(req, res) => {
     const {organization} = req.body;
     try {
-        const org = await pool.query("SELECT * FROM organization WHERE name = $1 ", [organization]);
+        const org = await pool.query("SELECT * FROM organizations WHERE name = $1 ", [organization]);
         if (org.rows.length == 0) {
             const insertOrg = await pool.query("INSERT INTO organizations(name) VALUES($1) RETURNING *")
         }
