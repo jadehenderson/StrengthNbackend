@@ -5,6 +5,8 @@ const cors = require("cors");
 
 const app = express();
 let port = process.env.PORT || 5000;
+const authRoute = require("./routes/jwtAuth");
+const adminRoute = require("./routes/admiistrator");
 
 
 
@@ -13,8 +15,9 @@ let port = process.env.PORT || 5000;
 //middleware
 app.use(cors());
 app.use(express.json());
-const authRoute = require("./routes/jwtAuth");
+
 app.use("/auth", authRoute);
+app.use("/admin", adminRoute);
 app.get("/", (req, res) => {
     res.send("We are running");
 });
