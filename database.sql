@@ -22,6 +22,7 @@ CREATE TABLE users(
     pword VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL
 );
+
 CREATE TABLE userTOgroups(
     userID uuid,
     groupIDS int[],
@@ -31,7 +32,7 @@ CREATE TABLE userTOgroups(
 );
 CREATE TABLE groups(
     groupID SERIAL PRIMARY KEY,
-    userIDS int[],
+    userIDS uuid[],
     name VARCHAR(100),
     organization VARCHAR(100)
 
@@ -43,8 +44,6 @@ CREATE TABLE organizations(
     userIDS int[],
     groupIDS int[]
 );
-
-
 
 
 CREATE FUNCTION trig()
