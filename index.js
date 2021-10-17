@@ -7,6 +7,7 @@ const app = express();
 let port = process.env.PORT || 5000;
 const authRoute = require("./routes/jwtAuth");
 const adminRoute = require("./routes/administrator");
+const userRoute = require("./routes/users")
 
 
 
@@ -18,6 +19,7 @@ app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
+app.use("/user", userRoute);
 app.get("/", (req, res) => {
     res.send("We are running");
 });

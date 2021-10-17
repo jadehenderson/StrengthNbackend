@@ -46,6 +46,7 @@ CREATE TABLE users(
 );
 
 
+
 CREATE TABLE userTOgroups(
     userID uuid ,
     groupID INTEGER ,
@@ -59,8 +60,8 @@ CREATE FUNCTION groupcomponents()
 RETURNS trigger AS 
 $$
     BEGIN
-    INSERT INTO messages VALUES(NEW.groupID);
-    INSERT INTO schedules VALUES(NEW.groupID);
+    INSERT INTO messages(groupID) VALUES(NEW.groupID);
+    INSERT INTO schedules(groupID) VALUES(NEW.groupID);
     RETURN NEW;
     END;
 $$ LANGUAGE 'plpgsql';
