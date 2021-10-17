@@ -19,8 +19,9 @@ CREATE TABLE organizations(
 CREATE TABLE groups(
     groupID SERIAL PRIMARY KEY,
     loc VARCHAR(255),
-    startdate timestamp,
-    enddate timestamp,
+    starttime TIME,
+    endtime TIME,
+    dati DATE,
     groupname VARCHAR(100),
     orgID INTEGER,
     FOREIGN KEY (orgID) REFERENCES organizations(organizationID)
