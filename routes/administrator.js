@@ -33,8 +33,8 @@ router.post("/group" , async(req, res) => {
                 if (user.rows.length == 0) {
                     return;
                 }
-                
                 const { userid, fname } = user.rows[0]
+                const updateUserOrg = await pool.query("UPDATE users SET orgID = $1 WHERE userID = $2", [orgid, userid])
 
                 //console.log(fname + "  " + groupid)
                 const insertUsertoGroup = await pool.query("INSERT INTO usertogroups(userID, groupID) VALUES($1, $2) RETURNING *", [userid, groupid])

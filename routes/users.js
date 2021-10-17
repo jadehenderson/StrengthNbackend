@@ -5,6 +5,32 @@ const authorization = require("../middleware/authorization");
 
 
 //registering
+router.get("/home" , authorization, async(req, res) => {
+    
+    try {
+        const {id} = req.user;
+        const schedules = await pool.query("SELECT * FROM schedules WHERE groupID IN (SELECT groupID FROM userTOgroups WHERE userID = $1)", [id]);
+        const messages = await pool.query( "SELECT DISTINCT ON (groupID) * FROM messages WHERE groupID IN (SELECT groupID FROM userTOgroups WHERE userID = $1) ORDER BY groupID, created_at DESC", [id]);
+        const groups = await pool.query("SELECT * FROM groups WHERE groupID IN (SELECT groupID FROM userTOgroups WHERE userID = $1)", [id]);
+        const user = await pool.query("SELECT * FROM users WHERE userID = $1",[id]);
+        const org = await pool.query("SELECT orgname FROM organizations WHERE organizationID IN (SELECT orgID FROM users WHERE userID = $1)", [id]);
+        const userInfo = {
+            "user": user.rows,
+            "org": org.rows,
+            "groups": groups.rows,
+            "messages": messages.rows,
+            "schedules": schedules.rows
+        }
+        res.json(JSON.stringify(userInfo));
+
+
+    } catch (err) {
+        console.log("schedule error")
+        console.log(err.message);
+        res.status(500).json("Server Error 2");
+    }
+})
+
 
 router.get("/schedules" , authorization, async(req, res) => {
     
