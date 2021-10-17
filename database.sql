@@ -26,10 +26,7 @@ CREATE TABLE groups(
     FOREIGN KEY (orgID) REFERENCES organizations(organizationID)
 );
 
-CREATE TABLE messages(
-    groupID INTEGER PRIMARY KEY,
-    FOREIGN KEY (groupID) REFERENCES groups(groupID)
-);
+
 CREATE TABLE schedules(
     groupID INTEGER PRIMARY KEY,
     FOREIGN KEY (groupID) REFERENCES groups(groupID)
@@ -44,7 +41,14 @@ CREATE TABLE users(
     orgID INTEGER,
     FOREIGN KEY (orgID) REFERENCES organizations(organizationID)
 );
-
+CREATE TABLE messages(
+    groupID INTEGER,
+    message varchar(255),
+    userID uuid,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userID) REFERENCES users(userID),
+    FOREIGN KEY (groupID) REFERENCES groups(groupID)
+);
 
 
 CREATE TABLE userTOgroups(
