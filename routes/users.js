@@ -22,6 +22,7 @@ router.get("/home" , authorization, async(req, res) => {
             "schedules": schedules.rows
         }
         res.json(JSON.stringify(userInfo));
+        
 
 
     } catch (err) {
