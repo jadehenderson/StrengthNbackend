@@ -11,11 +11,9 @@ router.post("/register" ,validInfo, async(req, res) => {
     const {fname, lname, email, password} = req.body;
     try {
         const user = await pool.query("SELECT * FROM users WHERE email = $1 ", [email]);
-        
         if (user.rows.length > 0) {
-            return res.status(401).json("User already exists.")
+            return res.status(401).json({msg: "User already exists."})
         }
-        console.log("here")
         const saltRound = await bcrypt.genSalt(10);
         const bcryptPassowrd = await bcrypt.hash(password, saltRound);
         console.log(bcryptPassowrd);
@@ -25,11 +23,11 @@ router.post("/register" ,validInfo, async(req, res) => {
         const newUser = await pool.query(query, values);
         const token = jwtGenerator(newUser.rows[0].userid);
         console.log(newUser.rows[0]);
-        res.json(token);
+        res.status(201).json(token);
 
     } catch (err) {
         console.log(err.message);
-        res.status(500).json("Server Error 2");
+        res.status(500).json("Server Error");
     }
 })
 
@@ -38,16 +36,16 @@ router.post("/login" ,validInfo, async(req, res) => {
         const {email, password} = req.body;
         const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
         if (user.rows.length === 0) {
-            return res.status(401).send("Email does not exist")
+            return res.status(401).send({msg : "Email does not exist"})
         }
         const validPassword = await bcrypt.compare(password, user.rows[0].pword);
         console.log(validPassword)
         if (!validPassword) {
-            return res.status(401).send("Password is not correct")
+            return res.status(401).send({msg: "Password is not correct"})
         }
 
         const token = jwtGenerator(user.rows[0].userid);
-        res.json(token);
+        res.status(200).json(token);
 
     } catch (err) {
         console.log(err.message);

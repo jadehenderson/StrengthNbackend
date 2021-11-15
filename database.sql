@@ -10,7 +10,7 @@ drop function if exists trig;
 
 
 
-
+CREATE TYPE step AS ENUM ('pw', 'vw', 'pd', 'vd');
 
 CREATE TABLE organizations(
     organizationID SERIAL PRIMARY KEY,
@@ -30,6 +30,13 @@ CREATE TABLE groups(
 
 CREATE TABLE schedules(
     groupID INTEGER PRIMARY KEY,
+    currentstep step DEFAULT 'pw',
+    nummembers INTEGER,
+    mont VARCHAR(100),
+    week VARCHAR(100),
+    weeks INTEGER[] DEFAULT '{}',
+    dates INTEGER[][],
+    finished uuid[] DEFAULT '{}',
     FOREIGN KEY (groupID) REFERENCES groups(groupID)
 );
 
