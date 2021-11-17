@@ -85,6 +85,61 @@ router.get("/schedules/:id", authorization, async (req, res) => {
 		res.status(500).json("Server Error 2");
 	}
 });
+router.post("/schedules/:id", authorization, async (req, res) => {
+	try {
+		const { id } = req.user;
+		const scheduleID = req.params.id;
+		console.log(scheduleID);
+		const userIsPartOfGroup = await pool.query(
+			"SELECT groupid FROM userTOgroups where userID = $1",
+			[id]
+		);
+		const usersGroups = userIsPartOfGroup.rows;
+		let isInGroup = false;
+		for (const group of usersGroups) {
+			const { groupid } = group;
+			if (groupid == scheduleID) {
+				isInGroup = true;
+				break;
+			}
+		}
+		if (!isInGroup) {
+			return res.json("User does not have access to this group");
+		}
+		const schedule = await pool.query(
+			"SELECT * FROM schedules where groupID = $1",
+			[scheduleID]
+		);
+		let { nummembers, finished, weeks, currentstep } = schedule.rows[0];
+		finished.push(id);
+		for (let i = 0; i < 4; i++) {
+			weeks.push(0);
+		}
+		if (finished.length == nummembers) {
+			finished = [];
+			if (currentstep === "pw") {
+				currentstep = "vw";
+			} else if (currentstep === "vw") {
+				currentstep = "pd";
+			} else if (currentstep === "pd") {
+				currentstep = "vd";
+			} else {
+				currentstep = "f";
+			}
+		}
+		const updateSchedule = pool.query(
+			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 WHERE groupID = $2 RETURNING *",
+			[currentstep, weeks, finished]
+		);
+		// 'pw', 'vw', 'pd', 'vd'
+
+		res.json(updateSchedule.rows);
+	} catch (err) {
+		console.log("schedule error");
+		console.log(err.message);
+		res.status(500).json("Server Error 2");
+	}
+});
 
 router.get("/messages", authorization, async (req, res) => {
 	try {

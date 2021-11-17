@@ -10,7 +10,7 @@ drop function if exists trig;
 
 
 
-CREATE TYPE step AS ENUM ('pw', 'vw', 'pd', 'vd');
+CREATE TYPE step AS ENUM ('pw', 'vw', 'pd', 'vd', 'f');
 
 CREATE TABLE organizations(
     organizationID SERIAL PRIMARY KEY,
