@@ -2,9 +2,6 @@ const router = require("express").Router();
 const pool = require("../db");
 
 //registering
-function sleep(ms) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 router.post("/group", async (req, res) => {
 	const { organization, groups } = req.body;

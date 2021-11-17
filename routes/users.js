@@ -128,8 +128,8 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			}
 		}
 		const updateSchedule = pool.query(
-			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 WHERE groupID = $2 RETURNING *",
-			[currentstep, weeks, finished]
+			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 WHERE groupID = $4 RETURNING *",
+			[currentstep, weeks, finished, scheduleID]
 		);
 		// 'pw', 'vw', 'pd', 'vd'
 
