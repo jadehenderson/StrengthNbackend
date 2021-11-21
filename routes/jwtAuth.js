@@ -18,7 +18,6 @@ router.post("/register", validInfo, async (req, res) => {
 		}
 		const saltRound = await bcrypt.genSalt(10);
 		const bcryptPassowrd = await bcrypt.hash(password, saltRound);
-		console.log(bcryptPassowrd);
 		const query =
 			"INSERT INTO users(fname, lname, email, pword) VALUES($1, $2, $3, $4) RETURNING *";
 		const values = [fname, lname, email, bcryptPassowrd];
@@ -26,7 +25,6 @@ router.post("/register", validInfo, async (req, res) => {
 		const newUser = await pool.query(query, values);
 		const fullName = newUser.rows[0].fname + " " + newUser.rows[0].lname;
 		const token = jwtGenerator(newUser.rows[0].userid, fullName);
-		console.log(newUser.rows[0]);
 		res.status(201).json(token);
 	} catch (err) {
 		console.log(err.message);
@@ -44,7 +42,6 @@ router.post("/login", validInfo, async (req, res) => {
 			return res.status(401).send({ msg: "Email does not exist" });
 		}
 		const validPassword = await bcrypt.compare(password, user.rows[0].pword);
-		console.log(validPassword);
 		if (!validPassword) {
 			return res.status(401).send({ msg: "Password is not correct" });
 		}

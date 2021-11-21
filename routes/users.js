@@ -264,6 +264,56 @@ router.post("/messages/:id", authorization, async (req, res) => {
 		res.status(500).json("Server Error 2");
 	}
 });
+router.get("/groups", authorization, async (req, res) => {
+	try {
+		const { id } = req.user;
+
+		const groups = await pool.query(
+			"SELECT * FROM groups WHERE groupID IN (SELECT groupID FROM userTOgroups WHERE userID = $1)",
+			[id]
+		);
+
+		res.status(200).json(groups.rows);
+	} catch (err) {
+		console.log("schedule error");
+		console.log(err.message);
+		res.status(500).json("Server Error 2");
+	}
+});
+
+router.get("/group/:id", authorization, async (req, res) => {
+	try {
+		const { id } = req.user;
+		const groupID = req.params.id;
+		const userIsPartOfGroup = await pool.query(
+			"SELECT groupid FROM userTOgroups where userID = $1",
+			[id]
+		);
+		const usersGroups = userIsPartOfGroup.rows;
+		let isInGroup = false;
+		for (const group of usersGroups) {
+			const { groupid } = group;
+			if (groupid == messageID) {
+				isInGroup = true;
+				break;
+			}
+		}
+		if (!isInGroup) {
+			return res
+				.status(401)
+				.json({ msg: "User does not have access to this group" });
+		}
+		const getGroup = await pool.query(
+			"SELECT * FROM groups where groupid = $1",
+			[groupID]
+		);
+		res.status(200).json(getGroup.rows[0]);
+	} catch (err) {
+		console.log("schedule error");
+		console.log(err.message);
+		res.status(500).json("Server Error 2");
+	}
+});
 
 router.post("/group/:id", authorization, async (req, res) => {
 	try {
