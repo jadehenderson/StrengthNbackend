@@ -26,7 +26,7 @@ router.post("/group", async (req, res) => {
 			console.log(group);
 			const newGroup = await pool.query(
 				"INSERT INTO groups(groupname, orgid) VALUES($1, $2) RETURNING *",
-				["meeting", orgid]
+				["Meeting", orgid]
 			);
 
 			let numMembers = 0;

@@ -1,12 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-const jwtGenerator = (userID) => {
-    const payload = {
-        user: {
-            id: userID
-        }
-    };
-    return jwt.sign(payload, "hello", { expiresIn: "1hr"});
-}
+const jwtGenerator = (userID, fullName) => {
+	const payload = {
+		user: {
+			id: userID,
+			name: fullName,
+		},
+	};
+	return jwt.sign(payload, "hello", { expiresIn: "1hr" });
+};
 
 module.exports = jwtGenerator;

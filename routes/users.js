@@ -3,6 +3,32 @@ const pool = require("../db");
 
 const authorization = require("../middleware/authorization");
 
+const weeksInMonth = (year, month) => {
+	let date = new Date(year, month);
+
+	let days = [];
+	while (date.getMonth() === month) {
+		const startDate = date.toString();
+		let endDate;
+		if (date.getDay() != 1) {
+			while (date.getMonth() === month && date.getDay() != 1) {
+				endDate = date.toString();
+				date.setDate(date.getDate() + 1);
+			}
+			days.push(startDate + "--" + endDate);
+			continue;
+		}
+		let numDays = 6;
+		while (numDays >= 0 && date.getMonth() === month) {
+			endDate = date.toString();
+			numDays--;
+			date.setDate(date.getDate() + 1);
+		}
+		days.push(startDate + "--" + endDate);
+	}
+	return days;
+};
+
 //registering
 router.get("/home", authorization, async (req, res) => {
 	try {
@@ -112,13 +138,26 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		);
 		let { nummembers, finished, weeks, currentstep } = schedule.rows[0];
 		finished.push(id);
-		for (let i = 0; i < 4; i++) {
-			weeks.push(0);
+		if (weeks.length === 0) {
+			for (let i = 0; i < weeksInMonth(2021, 11).length; i++) {
+				weeks.push(0);
+			}
 		}
 		if (finished.length == nummembers) {
 			finished = [];
 			if (currentstep === "pw") {
-				currentstep = "vw";
+				let evenVote = true;
+				for (let i = 0; i < weeks.length - 1; i++) {
+					if (weeks[i] != weeks[i + 1]) {
+						evenVote = false;
+						break;
+					}
+				}
+				if (evenVote) {
+					currentstep = "vw";
+				} else {
+					currentstep = "pd";
+				}
 			} else if (currentstep === "vw") {
 				currentstep = "pd";
 			} else if (currentstep === "pd") {
@@ -194,7 +233,7 @@ router.post("/messages/:id", authorization, async (req, res) => {
 		if (message.length > 255) {
 			return res.status(401).json("Message is too long.");
 		}
-		const { id } = req.user;
+		const { id, name } = req.user;
 		const messageID = req.params.id;
 		const userIsPartOfGroup = await pool.query(
 			"SELECT groupid FROM userTOgroups where userID = $1",
@@ -215,10 +254,45 @@ router.post("/messages/:id", authorization, async (req, res) => {
 				.json({ msg: "User does not have access to this group" });
 		}
 		const newMessage = await pool.query(
-			"INSERT INTO messages(groupID,message,userID) VALUES($1, $2, $3)",
-			[messageID, message, id]
+			"INSERT INTO messages(groupID,message,userID, sentBy) VALUES($1, $2, $3, $4)",
+			[messageID, message, id, name]
 		);
 		res.json(newMessage.rows);
+	} catch (err) {
+		console.log("schedule error");
+		console.log(err.message);
+		res.status(500).json("Server Error 2");
+	}
+});
+
+router.post("/group/:id", authorization, async (req, res) => {
+	try {
+		const { loc, startTime, endTime, date, groupName } = req.body;
+		const { id } = req.user;
+		const groupID = req.params.id;
+		const userIsPartOfGroup = await pool.query(
+			"SELECT groupid FROM userTOgroups where userID = $1",
+			[id]
+		);
+		const usersGroups = userIsPartOfGroup.rows;
+		let isInGroup = false;
+		for (const group of usersGroups) {
+			const { groupid } = group;
+			if (groupid == messageID) {
+				isInGroup = true;
+				break;
+			}
+		}
+		if (!isInGroup) {
+			return res
+				.status(401)
+				.json({ msg: "User does not have access to this group" });
+		}
+		const editGroup = await pool.query(
+			"UPDATE groups SET loc = $1 , starttime = $2 , endtime = $3 , dati = $4 , groupname = $5 , WHERE groupID = $6  RETURNING *",
+			[loc, startTime, endTime, date, groupName, groupID]
+		);
+		res.status(200).json(editGroup.rows);
 	} catch (err) {
 		console.log("schedule error");
 		console.log(err.message);

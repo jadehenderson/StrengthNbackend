@@ -52,6 +52,7 @@ CREATE TABLE users(
 CREATE TABLE messages(
     groupID INTEGER,
     message varchar(255),
+    sentBy varchar(255),
     userID uuid,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userID) REFERENCES users(userID),
