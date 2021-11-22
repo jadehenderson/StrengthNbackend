@@ -24,9 +24,36 @@ const weeksInMonth = (year, month) => {
 			numDays--;
 			date.setDate(date.getDate() + 1);
 		}
-		days.push(startDate + "--" + endDate);
+		days.push(startDate + "-" + endDate);
 	}
 	return days;
+};
+
+const numDays = (weeks, index) => {
+	const week = weeks[index];
+	const arr = week.split("-");
+	const start = new Date(arr[0]);
+	const end = new Date(arr[1]);
+	const diffTime = Math.abs(start - end);
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+	return diffDays;
+};
+
+const createArr = (days, min) => {
+	let times = [];
+	const totalDays = days + 1;
+	let totalMin = 1440;
+	let day = [];
+	while (totalMin > 0) {
+		day.push(0);
+		totalMin -= min;
+	}
+	while (days >= 0) {
+		times.push(day);
+		days--;
+	}
+	return times;
 };
 
 //registering
@@ -136,7 +163,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			"SELECT * FROM schedules where groupID = $1",
 			[scheduleID]
 		);
-		let { nummembers, finished, weeks, currentstep } = schedule.rows[0];
+		let { nummembers, finished, weeks, currentstep, dates } = schedule.rows[0];
 		finished.push(id);
 		if (weeks.length === 0) {
 			for (let i = 0; i < weeksInMonth(2021, 11).length; i++) {
@@ -157,6 +184,9 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					currentstep = "vw";
 				} else {
 					currentstep = "pd";
+
+					let totalDays = numDays(weeks, index);
+					dates = createArr(totalDays, 60);
 				}
 			} else if (currentstep === "vw") {
 				currentstep = "pd";
@@ -167,8 +197,8 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			}
 		}
 		const updateSchedule = pool.query(
-			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 WHERE groupID = $4 RETURNING *",
-			[currentstep, weeks, finished, scheduleID]
+			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 , dates = $4 WHERE groupID = $5 RETURNING *",
+			[currentstep, weeks, finished, dates, scheduleID]
 		);
 		// 'pw', 'vw', 'pd', 'vd'
 
@@ -275,7 +305,6 @@ router.get("/groups", authorization, async (req, res) => {
 
 		res.status(200).json(groups.rows);
 	} catch (err) {
-		console.log("schedule error");
 		console.log(err.message);
 		res.status(500).json("Server Error 2");
 	}
@@ -309,7 +338,6 @@ router.get("/group/:id", authorization, async (req, res) => {
 		);
 		res.status(200).json(getGroup.rows[0]);
 	} catch (err) {
-		console.log("schedule error");
 		console.log(err.message);
 		res.status(500).json("Server Error 2");
 	}
@@ -344,7 +372,6 @@ router.post("/group/:id", authorization, async (req, res) => {
 		);
 		res.status(200).json(editGroup.rows);
 	} catch (err) {
-		console.log("schedule error");
 		console.log(err.message);
 		res.status(500).json("Server Error 2");
 	}
