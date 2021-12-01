@@ -523,7 +523,7 @@ router.post("/group/:id", authorization, async (req, res) => {
 		let isInGroup = false;
 		for (const group of usersGroups) {
 			const { groupid } = group;
-			if (groupid == messageID) {
+			if (groupid == groupID) {
 				isInGroup = true;
 				break;
 			}
