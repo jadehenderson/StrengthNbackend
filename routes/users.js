@@ -489,7 +489,7 @@ router.get("/group/:id", authorization, async (req, res) => {
 		let isInGroup = false;
 		for (const group of usersGroups) {
 			const { groupid } = group;
-			if (groupid == messageID) {
+			if (groupid == groupID) {
 				isInGroup = true;
 				break;
 			}
@@ -516,7 +516,7 @@ router.post("/group/:id", authorization, async (req, res) => {
 		const { id } = req.user;
 		const groupID = req.params.id;
 		const userIsPartOfGroup = await pool.query(
-			"SELECT groupid FROM userTOgroups where userID = $1",
+			"SELECT groupid FROM userTOgroups WHERE userID = $1",
 			[id]
 		);
 		const usersGroups = userIsPartOfGroup.rows;
@@ -534,7 +534,7 @@ router.post("/group/:id", authorization, async (req, res) => {
 				.json({ msg: "User does not have access to this group" });
 		}
 		const editGroup = await pool.query(
-			"UPDATE groups SET loc = $1 , starttime = $2 , endtime = $3 , dati = $4 , groupname = $5 , WHERE groupID = $6  RETURNING *",
+			"UPDATE groups SET loc = $1 , starttime = $2 , endtime = $3 , dati = $4 , groupname = $5 WHERE groupID = $6  RETURNING *",
 			[loc, startTime, endTime, date, groupName, groupID]
 		);
 		res.status(200).json(editGroup.rows);
