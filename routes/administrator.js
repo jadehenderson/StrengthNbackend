@@ -47,7 +47,7 @@ router.post("/group", async (req, res) => {
 	const { organization, groups, indexMonth } = req.body;
 	try {
 		// create org
-		const month = indexToMonth[indexMonth];
+		const month = indexToMonth[indexMonth] + " Meeting";
 		const numWeeks = weeksInMonth(2021, indexMonth).length;
 		let weeks = [];
 		for (let i = 0; i < numWeeks; i++) {
