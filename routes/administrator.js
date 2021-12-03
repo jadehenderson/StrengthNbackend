@@ -1,6 +1,21 @@
 const router = require("express").Router();
 const pool = require("../db");
 
+let indexToMonth = {
+	0: "January",
+	1: "February",
+	2: "March",
+	3: "April",
+	4: "May",
+	5: "June",
+	6: "July",
+	7: "August",
+	8: "September",
+	9: "October",
+	10: "November",
+	11: "December",
+};
+
 //registering
 const weeksInMonth = (year, month) => {
 	let date = new Date(year, month);
@@ -32,6 +47,7 @@ router.post("/group", async (req, res) => {
 	const { organization, groups, indexMonth } = req.body;
 	try {
 		// create org
+		const month = indexToMonth[indexMonth];
 		const numWeeks = weeksInMonth(2021, indexMonth).length;
 		let weeks = [];
 		for (let i = 0; i < numWeeks; i++) {
@@ -57,7 +73,7 @@ router.post("/group", async (req, res) => {
 			console.log(group);
 			const newGroup = await pool.query(
 				"INSERT INTO groups(groupname, orgid) VALUES($1, $2) RETURNING *",
-				["Meeting", orgid]
+				[month, orgid]
 			);
 			let members = [];
 			let numMembers = 0;
