@@ -23,6 +23,7 @@ CREATE TABLE groups(
     endtime TIME,
     dati DATE,
     groupname VARCHAR(100),
+    members TEXT [],
     orgID INTEGER,
     FOREIGN KEY (orgID) REFERENCES organizations(organizationID)
 );

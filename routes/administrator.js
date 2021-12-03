@@ -59,7 +59,7 @@ router.post("/group", async (req, res) => {
 				"INSERT INTO groups(groupname, orgid) VALUES($1, $2) RETURNING *",
 				["Meeting", orgid]
 			);
-
+			let members = [];
 			let numMembers = 0;
 			const { groupid } = newGroup.rows[0];
 			for (const email of group) {
@@ -74,9 +74,12 @@ router.post("/group", async (req, res) => {
 				numMembers += 1;
 				const { userid } = user.rows[0];
 				const updateUserOrg = await pool.query(
-					"UPDATE users SET orgID = $1 WHERE userID = $2",
+					"UPDATE users SET orgID = $1 WHERE userID = $2 RETURNING *",
 					[orgid, userid]
 				);
+				const memberName =
+					updateUserOrg.rows[0].fname + " " + updateUserOrg.rows[0].lname;
+				members.push(memberName);
 				const insertUsertoGroup = await pool.query(
 					"INSERT INTO usertogroups(userID, groupID) VALUES($1, $2) RETURNING *",
 					[userid, groupid]
@@ -85,6 +88,10 @@ router.post("/group", async (req, res) => {
 			const updateGroupCountAndWeeks = await pool.query(
 				"UPDATE schedules SET nummembers = $1 , weeks = $2 , indexMonth = $3 WHERE groupID = $4 RETURNING *",
 				[numMembers, weeks, indexMonth, groupid]
+			);
+			const updateGroupMembers = await pool.query(
+				"UPDATE groups SET members = $1 WHERE groupID = $2 RETURNING *",
+				[members, groupid]
 			);
 		}
 		res.status(201).json({ msg: "Successfully made groups" });
