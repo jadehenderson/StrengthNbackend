@@ -147,7 +147,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 	try {
 		const { id } = req.user;
 		const scheduleID = req.params.id;
-		let { weeks, dates } = req.body;
+		let { weeks, dates, year } = req.body;
 		const userIsPartOfGroup = await pool.query(
 			"SELECT groupid FROM userTOgroups where userID = $1",
 			[id]
@@ -298,7 +298,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					if (startTime === "24:00") {
 						endTime = "12:00";
 					}
-					const weeksArr = weeksInMonth(2021, indexMonth);
+					const weeksArr = weeksInMonth(year, indexMonth);
 					const currWeek = weeksArr[indexWeek];
 					const weekInterval = currWeek.split("-");
 					const startDate = new Date(weekInterval[0]);
@@ -357,7 +357,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				if (startTime === "24:00") {
 					endTime = "12:00";
 				}
-				const weeksArr = weeksInMonth(2021, indexMonth);
+				const weeksArr = weeksInMonth(year, indexMonth);
 				const currWeek = weeksArr[indexWeek];
 				const weekInterval = currWeek.split("-");
 				const startDate = new Date(weekInterval[0]);
