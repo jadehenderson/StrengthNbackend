@@ -174,7 +174,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		for (let i = 0; i < finished.length; i++) {
 			let currID = finished[i];
 			if (currID === id) {
-				return;
+				return res.json("User has already voted");
 			}
 		}
 		if (finished.length == nummembers) {
