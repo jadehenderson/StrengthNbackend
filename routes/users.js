@@ -171,6 +171,12 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		let { nummembers, finished, currentstep, indexWeek, indexMonth } =
 			schedule.rows[0];
 		finished.push(id);
+		for (let i = 0; i < finished.length; i++) {
+			let currID = finished[i];
+			if (currID === id) {
+				return;
+			}
+		}
 		if (finished.length == nummembers) {
 			finished = [];
 			if (currentstep === "pw") {
