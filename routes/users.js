@@ -147,7 +147,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 	try {
 		const { id } = req.user;
 		const scheduleID = req.params.id;
-		let { weeks, dates, year } = req.body;
+		let { weeks, dates } = req.body;
 		const userIsPartOfGroup = await pool.query(
 			"SELECT groupid FROM userTOgroups where userID = $1",
 			[id]
@@ -168,7 +168,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			"SELECT * FROM schedules where groupID = $1",
 			[scheduleID]
 		);
-		let { nummembers, finished, currentstep, indexWeek, indexMonth } =
+		let { nummembers, finished, currentstep, indexWeek, indexMonth, yer } =
 			schedule.rows[0];
 		for (let i = 0; i < finished.length; i++) {
 			let currID = finished[i];
@@ -209,8 +209,8 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 						}
 					}
 					indexWeek = maxIndex;
-
-					let totalDays = numDays(weeks, maxIndex);
+					let weeksInterval = weeksInMonth(yer, indexWeek);
+					let totalDays = numDays(weeksInterval, maxIndex);
 					dates = createArr(totalDays, 60);
 				}
 			} else if (currentstep === "vw") {
@@ -226,7 +226,8 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				}
 				indexWeek = maxIndex;
 
-				let totalDays = numDays(weeks, maxIndex);
+				let weeksInterval = weeksInMonth(yer, indexWeek);
+				let totalDays = numDays(weeksInterval, maxIndex);
 				dates = createArr(totalDays, 60);
 			} else if (currentstep === "pd") {
 				let set = {};
@@ -289,7 +290,6 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 						21: "21:00",
 						22: "22:00",
 						23: "23:00",
-						24: "24:00",
 					};
 					// yyyy-mm-dd
 
@@ -298,14 +298,20 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					if (startTime === "24:00") {
 						endTime = "12:00";
 					}
-					const weeksArr = weeksInMonth(year, indexMonth);
+					const weeksArr = weeksInMonth(yer, indexMonth);
 					const currWeek = weeksArr[indexWeek];
 					const weekInterval = currWeek.split("-");
 					const startDate = new Date(weekInterval[0]);
 					startDate = addDays(startDate, maxDate);
+					const dati =
+						startDate.getFullYear() +
+						"" +
+						(startDate.getMonth() + 1) +
+						"" +
+						startDate.getDate();
 					const updateGroup = pool.query(
 						"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
-						[startTime, endTime, startDate, scheduleID]
+						[startTime, endTime, dati, scheduleID]
 					);
 					currentstep = "f";
 				}
@@ -348,23 +354,28 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					21: "21:00",
 					22: "22:00",
 					23: "23:00",
-					24: "24:00",
 				};
 				// yyyy-mm-dd
 
 				let startTime = times[maxTime];
 				let endTime = times[maxTime + 1];
-				if (startTime === "24:00") {
+				if (startTime === "23:00") {
 					endTime = "12:00";
 				}
-				const weeksArr = weeksInMonth(year, indexMonth);
+				const weeksArr = weeksInMonth(yer, indexMonth);
 				const currWeek = weeksArr[indexWeek];
 				const weekInterval = currWeek.split("-");
 				const startDate = new Date(weekInterval[0]);
 				startDate = addDays(startDate, maxDate);
+				const dati =
+					startDate.getFullYear() +
+					"" +
+					(startDate.getMonth() + 1) +
+					"" +
+					startDate.getDate();
 				const updateGroup = pool.query(
 					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
-					[startTime, endTime, startDate, scheduleID]
+					[startTime, endTime, dati, scheduleID]
 				);
 				currentstep = "f";
 			} else {

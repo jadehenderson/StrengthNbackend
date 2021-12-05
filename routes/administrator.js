@@ -44,11 +44,11 @@ const weeksInMonth = (year, month) => {
 };
 
 router.post("/group", async (req, res) => {
-	const { organization, groups, indexMonth } = req.body;
+	const { organization, groups, indexMonth, year } = req.body;
 	try {
 		// create org
 		const month = indexToMonth[indexMonth] + " Meeting";
-		const numWeeks = weeksInMonth(2021, indexMonth).length;
+		const numWeeks = weeksInMonth(year, indexMonth).length;
 		let weeks = [];
 		for (let i = 0; i < numWeeks; i++) {
 			weeks.push(0);
@@ -102,12 +102,12 @@ router.post("/group", async (req, res) => {
 				);
 			}
 			const updateGroupCountAndWeeks = await pool.query(
-				"UPDATE schedules SET nummembers = $1 , weeks = $2 , indexMonth = $3 WHERE groupID = $4 RETURNING *",
-				[numMembers, weeks, indexMonth, groupid]
+				"UPDATE schedules SET nummembers = $1 , weeks = $2 , indexMonth = $3 , yer = $4 WHERE groupID = $5 RETURNING *",
+				[numMembers, weeks, indexMonth, year, groupid]
 			);
 			const updateGroupMembers = await pool.query(
-				"UPDATE groups SET members = $1 WHERE groupID = $2 RETURNING *",
-				[members, groupid]
+				"UPDATE groups SET members = $1 , yer = $2 WHERE groupID = $3 RETURNING *",
+				[members, year, groupid]
 			);
 		}
 		res.status(201).json({ msg: "Successfully made groups" });
