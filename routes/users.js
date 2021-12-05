@@ -309,7 +309,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 						(startDate.getMonth() + 1) +
 						"" +
 						startDate.getDate();
-					const updateGroup = pool.query(
+					const updateGroup = await pool.query(
 						"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
 						[startTime, endTime, dati, scheduleID]
 					);
@@ -373,7 +373,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					(startDate.getMonth() + 1) +
 					"" +
 					startDate.getDate();
-				const updateGroup = pool.query(
+				const updateGroup = await pool.query(
 					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
 					[startTime, endTime, dati, scheduleID]
 				);
@@ -381,12 +381,10 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			} else {
 			}
 		}
-		const updateSchedule = pool.query(
+		const updateSchedule = await pool.query(
 			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 , dates = $4 , indexWeek = $5 WHERE groupID = $6 RETURNING *",
 			[currentstep, weeks, finished, dates, indexWeek, scheduleID]
 		);
-		// 'pw', 'vw', 'pd', 'vd'
-
 		res.status(200).json(updateSchedule.rows);
 	} catch (err) {
 		console.log("schedule error");
