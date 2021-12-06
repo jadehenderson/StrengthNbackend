@@ -84,13 +84,33 @@ router.get("/home", authorization, async (req, res) => {
 			"SELECT orgname FROM organizations WHERE organizationID IN (SELECT orgID FROM users WHERE userID = $1)",
 			[id]
 		);
+		const connections = await pool.query(
+			"SELECT userID, fname, lname FROM users WHERE orgID IN (SELECT orgID FROM users WHERE userID = $1)",
+			[id]
+		);
+		/*
+		const orgID = user.rows[0].orgID;
+		let connections;
+		if (orgID == undefined) {
+			connections = "none";
+		} else {
+			connections = await pool.query(
+				"SELECT userID, fname, lname FROM users WHERE orgID = $1",
+				[orgID]
+			);
+		}
+		*/
+
 		const userInfo = {
 			user: user.rows,
 			org: org.rows,
 			groups: groups.rows,
 			messages: messages.rows,
 			schedules: schedules.rows,
+			connections: connections.rows,
 		};
+		console.log(userInfo);
+
 		res.status(200).json(JSON.stringify(userInfo));
 	} catch (err) {
 		console.log("schedule error");
