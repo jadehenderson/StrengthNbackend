@@ -15,7 +15,7 @@ const weeksInMonth = (year, month) => {
 				endDate = date.toString();
 				date.setDate(date.getDate() + 1);
 			}
-			days.push(startDate + "--" + endDate);
+			days.push(startDate + "-" + endDate);
 			continue;
 		}
 		let numDays = 6;
@@ -188,7 +188,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			"SELECT * FROM schedules where groupID = $1",
 			[scheduleID]
 		);
-		let { nummembers, finished, currentstep, indexWeek, indexMonth, yer } =
+		let { nummembers, finished, currentstep, indexweek, indexmonth, yer } =
 			schedule.rows[0];
 		for (let i = 0; i < finished.length; i++) {
 			let currID = finished[i];
@@ -210,8 +210,8 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 						maxCount = totalVotes;
 					}
 				}
-				indexWeek = maxIndex;
-				let weeksInterval = weeksInMonth(yer, indexWeek);
+				indexweek = maxIndex;
+				let weeksInterval = weeksInMonth(yer, indexweek);
 				let totalDays = numDays(weeksInterval, maxIndex);
 				dates = createArr(totalDays, 60);
 			} else if (currentstep === "pd") {
@@ -257,14 +257,15 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				// yyyy-mm-dd
 
 				let startTime = times[maxTime];
-				let endTime = times[maxTime + 1];
-				if (startTime === "23:00") {
-					endTime = "12:00";
+				if (maxTime == 23) {
+					maxTime = -1;
 				}
-				const weeksArr = weeksInMonth(yer, indexMonth);
-				const currWeek = weeksArr[indexWeek];
+				let endTime = times[maxTime + 1];
+				const weeksArr = weeksInMonth(yer, indexmonth);
+				console.log(yer, indexmonth);
+				const currWeek = weeksArr[indexweek];
 				const weekInterval = currWeek.split("-");
-				const startDate = new Date(weekInterval[0]);
+				let startDate = new Date(weekInterval[0]);
 				startDate = addDays(startDate, maxDate);
 				const dati =
 					startDate.getFullYear() +
@@ -273,7 +274,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					"" +
 					startDate.getDate();
 				const updateGroup = await pool.query(
-					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
+					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3  WHERE groupID = $4 RETURNING *",
 					[startTime, endTime, dati, scheduleID]
 				);
 				/*
@@ -495,7 +496,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		}
 		const updateSchedule = await pool.query(
 			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 , dates = $4 , indexWeek = $5 WHERE groupID = $6 RETURNING *",
-			[currentstep, weeks, finished, dates, indexWeek, scheduleID]
+			[currentstep, weeks, finished, dates, indexweek, scheduleID]
 		);
 		res.status(200).json(updateSchedule.rows[0]);
 	} catch (err) {
