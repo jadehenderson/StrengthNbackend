@@ -197,6 +197,97 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			}
 		}
 		finished.push(id);
+		if (finished.length == nummembers) {
+			finished = [];
+			if (currentstep === "pw") {
+				currentstep = "pd";
+				let maxIndex = 0;
+				let maxCount = weeks[0];
+				for (let i = 1; i < weeks.length; i++) {
+					const totalVotes = weeks[i];
+					if (totalVotes > maxCount) {
+						maxIndex = i;
+						maxCount = totalVotes;
+					}
+				}
+				indexWeek = maxIndex;
+				let weeksInterval = weeksInMonth(yer, indexWeek);
+				let totalDays = numDays(weeksInterval, maxIndex);
+				dates = createArr(totalDays, 60);
+			} else if (currentstep === "pd") {
+				let maxDate = 0;
+				let maxTime = 0;
+				let maxCount = 0;
+				for (let i = 0; i < dates.length; i++) {
+					for (let j = 0; j < dates[0].length; j++) {
+						const count = dates[i][j];
+						if (count > maxCount) {
+							maxCount = count;
+							maxDate = i;
+							maxTime = j;
+						}
+					}
+				}
+				let times = {
+					0: "12:00",
+					1: "1:00",
+					2: "2:00",
+					3: "3:00",
+					4: "4:00",
+					5: "5:00",
+					6: "6:00",
+					7: "7:00",
+					8: "8:00",
+					9: "9:00",
+					10: "10:00",
+					11: "11:00",
+					12: "12:00",
+					13: "13:00",
+					14: "14:00",
+					15: "15:00",
+					16: "16:00",
+					17: "17:00",
+					18: "18:00",
+					19: "19:00",
+					20: "20:00",
+					21: "21:00",
+					22: "22:00",
+					23: "23:00",
+				};
+				// yyyy-mm-dd
+
+				let startTime = times[maxTime];
+				let endTime = times[maxTime + 1];
+				if (startTime === "23:00") {
+					endTime = "12:00";
+				}
+				const weeksArr = weeksInMonth(yer, indexMonth);
+				const currWeek = weeksArr[indexWeek];
+				const weekInterval = currWeek.split("-");
+				const startDate = new Date(weekInterval[0]);
+				startDate = addDays(startDate, maxDate);
+				const dati =
+					startDate.getFullYear() +
+					"" +
+					(startDate.getMonth() + 1) +
+					"" +
+					startDate.getDate();
+				const updateGroup = await pool.query(
+					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3 , WHERE groupID = $4 RETURNING *",
+					[startTime, endTime, dati, scheduleID]
+				);
+				/*
+				const deleteSchedule = await pool.query(
+					"DELETE FROM schedules WHERE groupID = $1 RETURNING *",
+					[scheduleID]
+				);
+				*/
+				currentstep = "f";
+			} else {
+				res.json({ msg: "Already scheduled meeting" });
+			}
+			/*
+		
 
 		if (finished.length == nummembers) {
 			finished = [];
@@ -400,6 +491,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				currentstep = "f";
 			} else {
 			}
+			*/
 		}
 		const updateSchedule = await pool.query(
 			"UPDATE schedules SET currentstep = $1 , weeks = $2 , finished = $3 , dates = $4 , indexWeek = $5 WHERE groupID = $6 RETURNING *",
