@@ -18,7 +18,7 @@ CREATE TABLE organizations(
 );
 CREATE TABLE groups(
     groupID SERIAL PRIMARY KEY,
-    loc VARCHAR(255),
+    loc VARCHAR(255) DEFAULT 'TBD',
     starttime TIME,
     endtime TIME,
     dati DATE,
