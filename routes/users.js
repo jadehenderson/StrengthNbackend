@@ -197,8 +197,6 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		indexmonth = parseInt(indexmonth);
 		yer = parseInt(yer);
 
-		console.log(finished);
-
 		for (let i = 0; i < finished.length; i++) {
 			let currID = finished[i];
 			if (currID === id) {
@@ -278,7 +276,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				let endTime = times[maxTime + 1];
 				const weeksArr = weeksInMonth(yer, indexmonth);
 				const currWeek = weeksArr[indexweek];
-				const weekInterval = currWeek.split("-");
+				const weekInterval = currWeek.split("?");
 				let startDate = new Date(weekInterval[0]);
 				console.log(maxDate);
 				console.log(startDate);
