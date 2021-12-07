@@ -53,6 +53,7 @@ router.post("/group", async (req, res) => {
 		for (let i = 0; i < numWeeks; i++) {
 			weeks.push(0);
 		}
+		console.log(weeks);
 
 		let orgid;
 		const org = await pool.query(
@@ -105,12 +106,13 @@ router.post("/group", async (req, res) => {
 				"UPDATE schedules SET nummembers = $1 , weeks = $2 , indexMonth = $3 , yer = $4 WHERE groupID = $5 RETURNING *",
 				[numMembers, weeks, indexMonth, year, groupid]
 			);
+			console.log(updateGroupCountAndWeeks.rows);
 			const updateGroupMembers = await pool.query(
 				"UPDATE groups SET members = $1 , yer = $2 WHERE groupID = $3 RETURNING *",
 				[members, year, groupid]
 			);
 		}
-		res.status(201).json({ msg: "Successfully made groups" });
+		res.status(201).json({ msg: "Successfully made " });
 	} catch (err) {
 		console.log(err);
 		res.status(500).json(`Error: ${err.json}`);
