@@ -277,11 +277,12 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				let startDate = new Date(weekInterval[0]);
 				console.log(startDate);
 				startDate.addDays(maxDate);
-				const strYear = startDate.getFullYear();
-				const strMonth = startDate.getMonth() + 1;
-				const strDay = startDate.getDate();
+				//const strYear = startDate.getFullYear();
+				//const strMonth = startDate.getMonth() + 1;
+				//const strDay = startDate.getDate();
 
-				const dati = strYear + "-" + strMonth + "-" + strDay;
+				//const dati = strYear + "-" + strMonth + "-" + strDay;
+				const dati = startDate.toISOString();
 				console.log(dati);
 				const updateGroup = await pool.query(
 					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3  WHERE groupID = $4 RETURNING *",
