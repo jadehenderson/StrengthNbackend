@@ -34,7 +34,7 @@ CREATE TABLE schedules(
     currentstep step DEFAULT 'pw',
     nummembers INTEGER,
     indexMonth INTEGER,
-    indexWeek VARCHAR(255),
+    indexWeek INTEGER,
     yer INTEGER,
     weeks INTEGER[] DEFAULT '{}',
     dates INTEGER[][],

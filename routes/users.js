@@ -221,7 +221,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				console.log(weeksInterval);
 				console.log(yer, indexmonth);
 				let totalDays = numDays(weeksInterval, maxIndex);
-				console.log(totalDays);
+				console.log(maxIndex);
 				dates = createArr(totalDays, 60);
 			} else if (currentstep === "pd") {
 				let maxDate = 0;
@@ -275,13 +275,13 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				const currWeek = weeksArr[indexweek];
 				const weekInterval = currWeek.split("-");
 				let startDate = new Date(weekInterval[0]);
+				console.log(startDate);
 				startDate.addDays(maxDate);
-				const dati =
-					startDate.getFullYear() +
-					"" +
-					(startDate.getMonth() + 1) +
-					"" +
-					startDate.getDate();
+				const strYear = startDate.getFullYear();
+				const strMonth = startDate.getMonth() + 1;
+				const strDay = startDate.getDate();
+
+				const dati = strYear + "-" + strMonth + "-" + strDay;
 				console.log(dati);
 				const updateGroup = await pool.query(
 					"UPDATE groups SET starttime = $1 , endtime = $2 , dati = $3  WHERE groupID = $4 RETURNING *",
