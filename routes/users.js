@@ -190,9 +190,10 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			[scheduleID]
 		);
 
-		let { nummembers, finished, currentstep, indexmonth, indexweek, yer } =
+		let { nummembers, finished, currentstep, indexmonth, yer } =
 			schedule.rows[0];
 		nummembers = parseInt(nummembers);
+		let indexweek = -1;
 
 		indexmonth = parseInt(indexmonth);
 		yer = parseInt(yer);
@@ -228,6 +229,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				console.log(maxIndex);
 				dates = createArr(totalDays, 60);
 			} else if (currentstep === "pd") {
+				indexweek = schedule.rows[0].indexweek;
 				indexweek = parseInt(indexweek);
 				let maxDate = 0;
 				let maxTime = 0;
@@ -279,7 +281,10 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				const currWeek = weeksArr[indexweek];
 				const weekInterval = currWeek.split("-");
 				let startDate = new Date(weekInterval[0]);
-				startDate.addDays(maxDate);
+				console.log(maxDate);
+				console.log(startDate);
+				startDate.setDate(startDate.getDate() + maxDate);
+				console.log(startDate);
 				const dati = startDate.toISOString();
 				console.log(dati);
 				const updateGroup = await pool.query(
