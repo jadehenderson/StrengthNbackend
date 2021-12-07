@@ -114,7 +114,7 @@ router.post("/group", async (req, res) => {
 				[members, year, groupid]
 			);
 		}
-		res.status(201).json({ msg: "Successfully made " });
+		res.status(201).json({ msg: "Successfully made groups" });
 	} catch (err) {
 		console.log(err);
 		res.status(500).json(`Error: ${err.json}`);
