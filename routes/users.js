@@ -193,6 +193,11 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		let { nummembers, finished, currentstep, indexweek, indexmonth, yer } =
 			schedule.rows[0];
 
+		nummembers = parseInt(nummembers);
+		indexweek = parseInt(indexweek);
+		indexmonth = parseInt(indexmonth);
+		yer = parseInt(yer);
+
 		console.log(finished);
 
 		for (let i = 0; i < finished.length; i++) {
