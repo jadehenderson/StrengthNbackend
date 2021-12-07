@@ -44,7 +44,7 @@ const weeksInMonth = (year, month) => {
 };
 
 router.post("/group", async (req, res) => {
-	const { organization, groups, indexMonth, year } = req.body;
+	let { organization, groups, indexMonth, year } = req.body;
 	try {
 		// create org
 		indexMonth = parseInt(indexMonth);
