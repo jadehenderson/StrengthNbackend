@@ -190,10 +190,9 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			[scheduleID]
 		);
 
-		let { nummembers, finished, currentstep, indexmonth, yer } =
+		let { nummembers, finished, currentstep, indexmonth, yer, indexweek } =
 			schedule.rows[0];
 		nummembers = parseInt(nummembers);
-		let indexweek = -1;
 
 		indexmonth = parseInt(indexmonth);
 		yer = parseInt(yer);
