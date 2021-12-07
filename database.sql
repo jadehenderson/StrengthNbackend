@@ -29,7 +29,6 @@ CREATE TABLE groups(
     FOREIGN KEY (orgID) REFERENCES organizations(organizationID)
 );
 
-
 CREATE TABLE schedules(
     groupID INTEGER PRIMARY KEY,
     currentstep step DEFAULT 'pw',
