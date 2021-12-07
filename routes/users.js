@@ -32,34 +32,35 @@ const weeksInMonth = (year, month) => {
 const numDays = (weeks, index) => {
 	const week = weeks[index];
 	const arr = week.split("-");
-	const start = new Date(arr[0]);
-	const end = new Date(arr[1]);
-	const diffTime = Math.abs(start - end);
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	const start = new Date(arr[0]).getDate();
+	const end = new Date(arr[1]).getDate();
+	const diffTime = Math.abs(end - start);
+	const diffDays = diffTime + 1;
 
 	return diffDays;
 };
 
 const createArr = (days, min) => {
 	let times = [];
-	const totalDays = days + 1;
+	const totalDays = days;
 	let totalMin = 1440;
 	let day = [];
 	while (totalMin > 0) {
 		day.push(0);
 		totalMin -= min;
 	}
-	while (days >= 0) {
+	while (days > 0) {
 		times.push(day);
 		days--;
 	}
 	return times;
 };
-function addDays(date, days) {
-	let result = new Date(date);
-	result.setDate(result.getDate() + days);
-	return result;
-}
+
+Date.prototype.addDays = function (days) {
+	const date = new Date(this.valueOf());
+	date.setDate(date.getDate() + days);
+	return date;
+};
 
 //registering
 router.get("/home", authorization, async (req, res) => {
@@ -188,14 +189,19 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			"SELECT * FROM schedules where groupID = $1",
 			[scheduleID]
 		);
+
 		let { nummembers, finished, currentstep, indexweek, indexmonth, yer } =
 			schedule.rows[0];
+
+		console.log(finished);
+
 		for (let i = 0; i < finished.length; i++) {
 			let currID = finished[i];
 			if (currID === id) {
 				return res.json("User has already voted");
 			}
 		}
+
 		finished.push(id);
 		if (finished.length == nummembers) {
 			finished = [];
@@ -266,7 +272,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 				const currWeek = weeksArr[indexweek];
 				const weekInterval = currWeek.split("-");
 				let startDate = new Date(weekInterval[0]);
-				startDate = addDays(startDate, maxDate);
+				startDate.addDays(maxDate);
 				const dati =
 					startDate.getFullYear() +
 					"" +
@@ -291,7 +297,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 		res.status(200).json(updateSchedule.rows[0]);
 	} catch (err) {
 		console.log("schedule error");
-		console.log(err.message);
+		console.log(err);
 		res.status(500).json("Server Error 2");
 	}
 });
