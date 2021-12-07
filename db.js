@@ -1,4 +1,7 @@
 const { Pool } = require("pg");
+require("dotenv").config;
+
+//let connectionString = process.env.connectionString;
 
 const pool = new Pool({
 	/*

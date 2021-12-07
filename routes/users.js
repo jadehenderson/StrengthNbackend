@@ -15,7 +15,7 @@ const weeksInMonth = (year, month) => {
 				endDate = date.toString();
 				date.setDate(date.getDate() + 1);
 			}
-			days.push(startDate + "-" + endDate);
+			days.push(startDate + "?" + endDate);
 			continue;
 		}
 		let numDays = 6;
@@ -24,14 +24,14 @@ const weeksInMonth = (year, month) => {
 			numDays--;
 			date.setDate(date.getDate() + 1);
 		}
-		days.push(startDate + "-" + endDate);
+		days.push(startDate + "?" + endDate);
 	}
 	return days;
 };
 
 const numDays = (weeks, index) => {
 	const week = weeks[index];
-	const arr = week.split("-");
+	const arr = week.split("?");
 	const start = new Date(arr[0]).getDate();
 	const end = new Date(arr[1]).getDate();
 	const diffTime = Math.abs(end - start);
@@ -217,8 +217,11 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 					}
 				}
 				indexweek = maxIndex;
-				let weeksInterval = weeksInMonth(yer, indexweek);
+				let weeksInterval = weeksInMonth(yer, indexmonth);
+				console.log(weeksInterval);
+				console.log(yer, indexmonth);
 				let totalDays = numDays(weeksInterval, maxIndex);
+				console.log(totalDays);
 				dates = createArr(totalDays, 60);
 			} else if (currentstep === "pd") {
 				let maxDate = 0;
