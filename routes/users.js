@@ -151,7 +151,7 @@ router.get("/schedules/:id", authorization, async (req, res) => {
 			}
 		}
 		if (!isInGroup) {
-			return res.json("User does not have access to this group");
+			return res.status(401).json({msg: "User does not have access to this group"});
 		}
 		const schedules = await pool.query(
 			"SELECT * FROM schedules where groupID = $1",
@@ -183,7 +183,7 @@ router.post("/schedules/:id", authorization, async (req, res) => {
 			}
 		}
 		if (!isInGroup) {
-			return res.json("User does not have access to this group");
+			return res.status(401).json({msg: "User does not have access to this group"});
 		}
 		const schedule = await pool.query(
 			"SELECT * FROM schedules where groupID = $1",
@@ -324,7 +324,6 @@ router.get("/messages/:id", authorization, async (req, res) => {
 	try {
 		const { id } = req.user;
 		const messageID = req.params.id;
-		console.log(messageID);
 		const userIsPartOfGroup = await pool.query(
 			"SELECT groupid FROM userTOgroups where userID = $1",
 			[id]
@@ -333,13 +332,13 @@ router.get("/messages/:id", authorization, async (req, res) => {
 		let isInGroup = false;
 		for (const group of usersGroups) {
 			const { groupid } = group;
-			if (groupid == messageID) {
+			if (groupid==messageID) {
 				isInGroup = true;
 				break;
 			}
 		}
 		if (!isInGroup) {
-			return res.json({ msg: "User does not have access to this group" });
+			return res.status(401).json({msg: "User does not have access to this group"});
 		}
 		const messages = await pool.query(
 			"SELECT * FROM messages where groupID = $1 ORDER BY created_at DESC",
