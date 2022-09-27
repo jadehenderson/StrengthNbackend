@@ -49,6 +49,7 @@ router.post("/group", async (req, res) => {
 		// create org
 		indexMonth = parseInt(indexMonth);
 		year = parseInt(year);
+
 		const month = indexToMonth[indexMonth] + " Meeting";
 		const numWeeks = weeksInMonth(year, indexMonth).length;
 		let weeks = [];
@@ -72,7 +73,9 @@ router.post("/group", async (req, res) => {
 			orgid = org.rows[0].organizationid;
 		}
 
-		for (const group of groups) {
+		console.log(typeof groups);
+		for (const prop in groups) {
+			let group = groups[prop];
 			console.log(group);
 			const newGroup = await pool.query(
 				"INSERT INTO groups(groupname, orgid) VALUES($1, $2) RETURNING *",
