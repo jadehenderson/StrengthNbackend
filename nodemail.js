@@ -2,6 +2,9 @@ const nodemailer = require('nodemailer');
 const {google} = require('googleapis');
 
 // fill in unique id, secret, and token values from with GCP Oauth setup
+// note that the refresh token will expire after 7 days if within the GCP setup
+// the application has 'testing' rather than 'production' status and
+// the Oauth consent screen is set to external rather than internal users
 
 const CLIENT_ID = ''
 const CLIENT_SECRET = ''
