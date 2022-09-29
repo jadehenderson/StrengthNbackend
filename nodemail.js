@@ -1,29 +1,46 @@
 const nodemailer = require('nodemailer');
+const {google} = require('googleapis');
 
-// Create the transporter with the required email configuration 
-let transporter = nodemailer.createTransport({
-    service: '', 
-    auth: {
-        type: '',
-        user: '',
-        pass: ''
+// fill in unique id, secret, and token values from with GCP Oauth setup
+
+const CLIENT_ID = ''
+const CLIENT_SECRET = ''
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground'
+const REFRESH_TOKEN = ''
+
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+
+async function sendMail() {
+    try {
+        const accessToken = await oAuth2Client.getAccessToken()
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: '',
+                clientId: CLIENT_ID,
+                clientSecret: CLIENT_SECRET,
+                refreshToken: REFRESH_TOKEN,
+                accessToken: accessToken
+            }
+        })
+
+        const mailOptions = {
+            from: '',
+            to: '',
+            subject: "hello from nodemailer",
+            text: 'hello again',
+            // html: optional
+        };
+
+        const result = await transporter.sendMail(mailOptions)
+        return result;
+
+    } catch (error) {
+        return error;
     }
-});
+}
 
-// setup e-mail data
-let mailOptions = {
-    from: '', 
-    to: '',
-    subject: '',
-    text: '',
-    html: '' // hmtl version of email optional
-};
-
-// send mail with defined transport object
-transporter.sendMail(mailOptions, function(error, success){
-    if(error){
-        console.log("Error: " + error);
-    } else {
-        console.log("Message sent successfully!");
-    }
-});
+sendMail().then(result=> console.log('Email sent!', result)).catch(error=> console.log(error.message));
