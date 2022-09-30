@@ -7,10 +7,10 @@ const {google} = require('googleapis');
 // the application has 'testing' rather than 'production' status and
 // the Oauth consent screen is set to external rather than internal users
 
-const CLIENT_ID = ''
-const CLIENT_SECRET = ''
-const REDIRECT_URI = ''
-const REFRESH_TOKEN = ''
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
+const REDIRECT_URI = process.env.REDIRECT_URI
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
@@ -23,7 +23,7 @@ async function sendMail() {
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
-                user: '',
+                user: 'jadehenderson16@gmail.com',
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
                 refreshToken: REFRESH_TOKEN,
@@ -32,9 +32,9 @@ async function sendMail() {
         })
 
         const mailOptions = {
-            from: '',
-            to: '',
-            subject: "hello testing nodemailer",
+            from: 'jadehenderson16@gmail.com',
+            to: 'sunnysidejade@gmail.com',
+            subject: "why",
             text: 'hiya',
             // html: optional
         };
