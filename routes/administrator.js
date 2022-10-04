@@ -137,7 +137,7 @@ router.post("/group", async (req, res) => {
 					service: 'gmail',
 					auth: {
 						type: 'OAuth2',
-						user: '',
+						user: 'strengthnapp@gmail.com',
 						clientId: CLIENT_ID,
 						clientSecret: CLIENT_SECRET,
 						refreshToken: REFRESH_TOKEN,
@@ -146,10 +146,10 @@ router.post("/group", async (req, res) => {
 				})
 		
 				const mailOptions = {
-					from: '',
+					from: 'strengthnapp@gmail.com',
 					to: group,
 					subject: "Strength^N Groups Created!",
-					text: 'Hello! You have recently been added to a new Strength^N group, log onto to the app to see your new connections.',
+					text: 'Hello! You have recently been added to a new Strength^N group, log onto the app to see your new connections.',
 					// html: optional
 				};
 		
