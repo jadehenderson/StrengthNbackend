@@ -2,9 +2,57 @@
 
 ## Project Summary
 
-Strength^n is a randomization algorithm that allows an administrator to make combinations from a list of participants. The goal of this project is to create a user interface to allow scheduling with your new combination, visualizing your growing network of meaningful connections, and maybe even texting functionality.
+Strength^n is a randomization algorithm that allows an administrator to make combinations from a list of participants. The goal of this project is to create a user interface to allow scheduling with your new combination, visualizing your growing network of connections, and message your group members.
 
-# Google Oauth Consent Screen
+## Getting Started
+
+### Prerequisites
+
+- Svelte install (steps below)
+- Clone repo from Github
+
+```javascript
+// install npm packages
+npm i
+
+```
+
+- Running locally:
+
+```javascript
+// run local svelte env
+npm run dev
+
+```
+
+> Note: the `@next` is temporary
+
+### Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```javascript
+npm run dev
+
+// or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+### Building
+
+Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
+
+```bash
+npm run build
+```
+
+> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+
+## Testing
+
+We use Jest as our testing platform. We have tests for the back-end analyzing the core capibilties of the project. The command "npm run test" will run the tests while "npm test --coverage" will display a detailed coverage report
+
+## Google Oauth Consent Screen
 
 NodeMailer is configured using Google Oauth in order to send automated emails from the app.
 
