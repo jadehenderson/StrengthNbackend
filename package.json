@@ -20,7 +20,9 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "googleapis": "^108.0.0",
     "jsonwebtoken": "^8.5.1",
+    "nodemailer": "^6.8.0",
     "pg": "^8.7.1"
   },
   "devDependencies": {

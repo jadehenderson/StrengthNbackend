@@ -1,5 +1,16 @@
 const router = require("express").Router();
 const pool = require("../db");
+const nodemailer = require('nodemailer');
+require("dotenv").config();
+const {google} = require('googleapis');
+
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
+const REDIRECT_URI = process.env.REDIRECT_URI
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN
+
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
 
 let indexToMonth = {
 	0: "January",
@@ -49,6 +60,7 @@ router.post("/group", async (req, res) => {
 		// create org
 		indexMonth = parseInt(indexMonth);
 		year = parseInt(year);
+
 		const month = indexToMonth[indexMonth] + " Meeting";
 		const numWeeks = weeksInMonth(year, indexMonth).length;
 		let weeks = [];
@@ -72,7 +84,9 @@ router.post("/group", async (req, res) => {
 			orgid = org.rows[0].organizationid;
 		}
 
-		for (const group of groups) {
+		console.log(typeof groups);
+		for (const prop in groups) {
+			let group = groups[prop];
 			console.log(group);
 			const newGroup = await pool.query(
 				"INSERT INTO groups(groupname, orgid) VALUES($1, $2) RETURNING *",
@@ -99,6 +113,7 @@ router.post("/group", async (req, res) => {
 				const memberName =
 					updateUserOrg.rows[0].fname + " " + updateUserOrg.rows[0].lname;
 				members.push(memberName);
+
 				const insertUsertoGroup = await pool.query(
 					"INSERT INTO usertogroups(userID, groupID) VALUES($1, $2) RETURNING *",
 					[userid, groupid]
@@ -113,6 +128,39 @@ router.post("/group", async (req, res) => {
 				"UPDATE groups SET members = $1 , yer = $2 WHERE groupID = $3 RETURNING *",
 				[members, year, groupid]
 			);
+			// auto-send email of group creation to members in groups
+		async function sendMail() {
+			try {
+				const accessToken = await oAuth2Client.getAccessToken()
+		
+				const transporter = nodemailer.createTransport({
+					service: 'gmail',
+					auth: {
+						type: 'OAuth2',
+						user: 'strengthnapp@gmail.com',
+						clientId: CLIENT_ID,
+						clientSecret: CLIENT_SECRET,
+						refreshToken: REFRESH_TOKEN,
+						accessToken: accessToken
+					}
+				})
+		
+				const mailOptions = {
+					from: 'strengthnapp@gmail.com',
+					to: group,
+					subject: "Strength^N Groups Created!",
+					text: 'Hello! You have recently been added to a new Strength^N group, log onto the app to see your new connections.',
+					// html: optional
+				};
+		
+				const result = await transporter.sendMail(mailOptions)
+				return result;
+		
+			} catch (error) {
+				return error;
+			}
+		}
+		sendMail().then(result=> console.log('Email sent!', result)).catch(error=> console.log(error.message));
 		}
 		res.status(201).json({ msg: "Successfully made groups" });
 	} catch (err) {

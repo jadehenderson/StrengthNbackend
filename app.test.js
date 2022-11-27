@@ -108,7 +108,9 @@ describe("POST /admin/group", () => {
                 groups : {
                     group1: ["lobe@gmail.com", "see@gmail.com", "justin@gmail.com"],
                     group2: ["peese@gmail.com", "justin@gmail.com", email]
-                }
+                },
+		indexMonth: 1,
+		year: 1
             });
             expect(response.statusCode).toBe(201);
             expect(response.body).toEqual({msg: "Successfully made groups"});
@@ -132,9 +134,8 @@ describe("GET /user/home", () => {
            
             const response = await request(app).get("/user/home").set('token', jwt);
             const res = JSON.parse(response.body)
-            groupID = res.groups[0].groupid;
-            console.log(res);
-            console.log("hey");
+	    // don't know why groupID is being checked here
+            groupID = res.groups.length != 0 ? res.groups[0].groupid : -1;
             expect(response.statusCode).toBe(200);
             expect(res).toHaveProperty('user', 'org', 'groups', 'messages', 'schedules');
 
