@@ -16,4 +16,5 @@ jobs:
         envkey_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         envkey_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         envkey_REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+        directory: StrengthNbackend
         fail_on_empty: false
