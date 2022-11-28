@@ -1,0 +1,19 @@
+name: Create envfile
+
+on: [ push ]
+
+jobs:
+
+  create-envfile:
+ 
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Make envfile
+      uses: SpicyPizza/create-envfile@v1.3
+      with:
+        envkey_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        envkey_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        envkey_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        envkey_REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+        fail_on_empty: false
