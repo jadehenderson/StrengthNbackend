@@ -2,19 +2,15 @@ name: Create envfile
 
 on: [ push ]
 
-jobs:
-
-  create-envfile:
- 
-    runs-on: ubuntu-latest
- 
-    steps:
-    - name: Make envfile
-      uses: SpicyPizza/create-envfile@v1.3
-      with:
-        envkey_CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        envkey_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        envkey_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-        envkey_REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
-        directory: StrengthNbackend
-        fail_on_empty: false
+jobs:    
+     create-envfile:
+           runs-on: ubuntu-latest
+           steps:
+              - name: Env create
+                run: |
+                   touch .env
+                   echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+                   echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+                   echo REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} >> .env
+                   echo REDIRECT_URI=${{ secrets.REDIRECT_URI }} >> .env
+                   cat .env
