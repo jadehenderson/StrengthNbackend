@@ -153,7 +153,18 @@ router.post("/group", async (req, res) => {
 					// html: optional
 				};
 		
-				const result = await transporter.sendMail(mailOptions)
+				const result = await new Promise((resolve, reject) => {
+					transporter.sendMail(mailOptions, (err, info) => {
+						if(err) {
+							console.error(err);
+							reject(err);
+						}
+						else {
+							console.log(info);
+							resolve(info);
+						}
+					});
+				});
 				return result;
 		
 			} catch (error) {
